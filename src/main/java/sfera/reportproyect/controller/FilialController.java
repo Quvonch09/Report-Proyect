@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sfera.reportproyect.dto.ApiResponse;
-import sfera.reportproyect.dto.request.req.ReqFilial;
-import sfera.reportproyect.entity.UniversalEntity;
+import sfera.reportproyect.dto.request.ReqFilial;
 import sfera.reportproyect.entity.enums.TypeEnum;
 import sfera.reportproyect.service.UniversalEntityService;
 
