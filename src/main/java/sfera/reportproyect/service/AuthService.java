@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import sfera.reportproyect.dto.ApiResponse;
-import sfera.reportproyect.dto.request.AuthRegister;
 import sfera.reportproyect.entity.User;
-import sfera.reportproyect.entity.enums.Role;
-import sfera.reportproyect.exception.DataNotFoundException;
 import sfera.reportproyect.repository.UserRepository;
 import sfera.reportproyect.security.JwtService;
 

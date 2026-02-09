@@ -1,4 +1,4 @@
-package sfera.reportproyect.dto.request.req;
+package sfera.reportproyect.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
