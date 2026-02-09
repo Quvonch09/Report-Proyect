@@ -1,9 +1,6 @@
 package sfera.reportproyect.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.collection.spi.BagSemantics;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,6 +39,15 @@ public class User extends BaseEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @ManyToOne
+    private UniversalEntity filial;
+
+    @ManyToOne
+    private UniversalEntity lavozim;
+
+    @ManyToOne
+    private UniversalEntity department;
 
     private boolean enabled;
 

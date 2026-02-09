@@ -3,7 +3,7 @@ package sfera.reportproyect.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sfera.reportproyect.dto.ApiResponse;
-import sfera.reportproyect.dto.request.req.ReqFilial;
+import sfera.reportproyect.dto.request.ReqFilial;
 import sfera.reportproyect.entity.UniversalEntity;
 import sfera.reportproyect.entity.enums.TypeEnum;
 import sfera.reportproyect.repository.UniversalEntityRepository;
