@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository;
 import sfera.reportproyect.entity.UniversalEntity;
 import sfera.reportproyect.entity.enums.TypeEnum;
 
+import java.util.Optional;
+import sfera.reportproyect.entity.enums.TypeEnum;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -30,4 +33,5 @@ public interface UniversalEntityRepository extends JpaRepository<UniversalEntity
     Optional<UniversalEntity> findByIdAndActiveTrue(Long id);
 
     Optional<UniversalEntity> findByNameAndIdNot(String name, Long id);
+    Optional<UniversalEntity> findByIdAndTypeEnum(Long id, TypeEnum typeEnum);
 }
