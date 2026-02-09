@@ -1,10 +1,10 @@
 package sfera.reportproyect.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.*;
 import sfera.reportproyect.entity.base.BaseEntity;
 import sfera.reportproyect.entity.enums.TypeEnum;
 
@@ -13,7 +13,12 @@ import sfera.reportproyect.entity.enums.TypeEnum;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class UniversalEntity extends BaseEntity {
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TypeEnum typeEnum;
     private boolean active;
 }
