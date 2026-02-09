@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sfera.reportproyect.entity.base.BaseEntity;
+import sfera.reportproyect.entity.enums.TypeEnum;
 
 @Entity
 @AllArgsConstructor
