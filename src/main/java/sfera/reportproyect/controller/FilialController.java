@@ -2,14 +2,15 @@ package sfera.reportproyect.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sfera.reportproyect.dto.ApiResponse;
 import sfera.reportproyect.dto.request.ReqFilial;
+import sfera.reportproyect.dto.response.ResPageable;
+import sfera.reportproyect.dto.response.ResUniversalDto;
 import sfera.reportproyect.entity.enums.TypeEnum;
 import sfera.reportproyect.service.UniversalEntityService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/filial")
@@ -21,4 +22,36 @@ public class FilialController {
     public ResponseEntity<ApiResponse<String>> saveFilial(@RequestBody ReqFilial reqFilial) {
         return ResponseEntity.ok(universalEntityService.save(reqFilial, TypeEnum.FILIAL));
     }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<ResPageable>> getFilialByPage(@RequestBody TypeEnum typeEnum,
+                                                                    @RequestBody String name,
+                                                                    @RequestParam(defaultValue = "0") int page,
+                                                                    @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(universalEntityService.getByPage(typeEnum, name, page, size));
+    }
+
+    @GetMapping("/get-list")
+    public ResponseEntity<ApiResponse<List<ResUniversalDto>>> getFilialList() {
+        return ResponseEntity.ok(universalEntityService.getList());
+    }
+
+    @GetMapping("/{filialId}")
+    public ResponseEntity<ApiResponse<ResUniversalDto>> getFilialById(@PathVariable Long filialId) {
+        return ResponseEntity.ok(universalEntityService.getById(filialId));
+    }
+
+    @PutMapping("/{filialId}")
+    public ResponseEntity<ApiResponse<String>> updateFilial(@PathVariable Long filialId, @RequestBody ReqFilial reqFilial) {
+        return ResponseEntity.ok(universalEntityService.update(filialId, reqFilial));
+
+    }
+
+    @DeleteMapping("/{filialId}")
+    public ResponseEntity<ApiResponse<String>> deleteFilial(@PathVariable Long filialId) {
+        return ResponseEntity.ok(universalEntityService.delete(filialId));
+    }
+
+
+
 }
