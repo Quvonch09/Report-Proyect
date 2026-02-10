@@ -32,7 +32,7 @@ public class FilialController {
 
     @GetMapping("/get-list")
     public ResponseEntity<ApiResponse<List<ResUniversalDto>>> getFilialList() {
-        return ResponseEntity.ok(universalEntityService.getList());
+        return ResponseEntity.ok(universalEntityService.getList(TypeEnum.FILIAL));
     }
 
     @GetMapping("/{filialId}")
