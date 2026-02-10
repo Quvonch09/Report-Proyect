@@ -28,9 +28,8 @@ public interface UniversalEntityRepository extends JpaRepository<UniversalEntity
                                  Pageable pageable);
 
     @Query(value = """
-    select * from universal_entity where active=true
+    select * from universal_entity where active=true and type_enum = ?1
     """, nativeQuery = true)
-    List<UniversalEntity> findAllActiveTrue();
     List<UniversalEntity> findAllAndActiveTrue(TypeEnum typeEnum);
     Optional<UniversalEntity> findByIdAndActiveTrue(Long id);
 

@@ -8,8 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import sfera.reportproyect.dto.LocationDTO;
 import sfera.reportproyect.entity.Location;
-import sfera.reportproyect.entity.UniversalEntity;
-import sfera.reportproyect.entity.enums.TypeEnum;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +26,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     Page<Location> search(@Param("name") String name,
                           Pageable pageable);
 
-    List<LocationDTO> findAllAndActiveTrue();
+    List<LocationDTO> findAllByActiveTrue();
 
     Optional<Location> findByIdAndActiveTrue(Long id);
 }
