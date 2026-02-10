@@ -3,6 +3,7 @@ package sfera.reportproyect.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import sfera.reportproyect.entity.base.BaseEntity;
+import sfera.reportproyect.entity.enums.Category;
 import sfera.reportproyect.entity.enums.Priority;
 import sfera.reportproyect.entity.enums.ReportEnum;
 
@@ -26,8 +27,8 @@ public class Report extends BaseEntity {
 
     private String comment;
 
-    @ManyToOne
-    private UniversalEntity category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     @ManyToOne
     private UniversalEntity reportType;

@@ -46,8 +46,6 @@ public class ReportService {
                 getUniversal(req.getReportTypeId(), TypeEnum.REPORT_TYPE, "Report type not found");
         UniversalEntity department =
                 getUniversal(req.getDepartmentId(), TypeEnum.DEPARTMENT_TYPE, "Department not found");
-        UniversalEntity category   =
-                getUniversal(req.getCategoryId(), TypeEnum.CATEGORY, "Category not found");
 
         Location location = getLocation(req.getLocationId());
 
@@ -64,7 +62,7 @@ public class ReportService {
                 .location(location)
                 .assignedUser(assignee)
                 .reportUser(user)
-                .category(category)
+                .category(req.getCategory())
                 .name(req.getReportName())
                 .description(req.getDescription())
                 .reportStatus(ReportEnum.NEW_REPORT)
@@ -94,8 +92,6 @@ public class ReportService {
                 getUniversal(reqReportDTO.getReportTypeId(), TypeEnum.REPORT_TYPE, "Report type not found");
         UniversalEntity department =
                 getUniversal(reqReportDTO.getDepartmentId(), TypeEnum.DEPARTMENT_TYPE, "Department not found");
-        UniversalEntity category   =
-                getUniversal(reqReportDTO.getCategoryId(), TypeEnum.CATEGORY, "Category not found");
 
         Location location = getLocation(reqReportDTO.getLocationId());
 
@@ -115,7 +111,7 @@ public class ReportService {
         report.setDescription(reqReportDTO.getDescription());
         report.setReportStatus(ReportEnum.NEW_REPORT);
         report.setReportUser(user);
-        report.setCategory(category);
+        report.setCategory(reqReportDTO.getCategory());
         report.setFileUrls(reqReportDTO.getFileUrls());
         report.setPriority(reqReportDTO.getPriority());
         report.setStartTime(reqReportDTO.getStartTime());
@@ -146,9 +142,6 @@ public class ReportService {
 
         ReportEnum fromStatus = report.getReportStatus();
         if (fromStatus == toStatus) return ApiResponse.success(reportMapper.resReport(report), "Success");
-
-        // (ixtiyoriy) status o'tish qoidalari
-        validateTransition(fromStatus, toStatus);
 
         report.setReportStatus(toStatus);
 
@@ -181,18 +174,6 @@ public class ReportService {
     public ApiResponse<List<ResReport>> getAll(){
         return ApiResponse.success(
                 reportRepository.findAllByActiveTrue().stream().map(reportMapper::resReport).toList(), "Success");
-    }
-
-
-    private void validateTransition(ReportEnum from, ReportEnum to) {
-        // minimal misol: CANCELLED dan boshqa statusga o'tmasin
-        if (from == ReportEnum.CANCELLED) {
-            throw new IllegalStateException("Cancelled report cannot be moved");
-        }
-        // APPROVE final bo'lsa:
-        if (from == ReportEnum.APPROVE && to != ReportEnum.APPROVE) {
-            throw new IllegalStateException("Approved report cannot be moved back");
-        }
     }
 
 

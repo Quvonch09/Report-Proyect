@@ -25,7 +25,8 @@ public class ReportController {
     private final ReportService reportService;
 
     @PostMapping
-    @Operation(description = "Priority -> HIGH, LOWER, MIDDLE  \n Date Format -> dd/MM/yyyy HH:mm")
+    @Operation(description = "Priority -> HIGH, LOWER, MIDDLE  \n Date Format -> dd/MM/yyyy HH:mm  " +
+            "\n Category -> NEAR_MISS, OBSERVATION, ACCIDENT, INCIDENT")
     public ResponseEntity<ApiResponse<String>> saveReport(@AuthenticationPrincipal User user,
                                                           @RequestBody ReqReport reqReport){
         return ResponseEntity.ok(reportService.saveReport(user, reqReport));
@@ -33,7 +34,8 @@ public class ReportController {
 
 
     @PutMapping
-    @Operation(description = "Priority -> HIGH, LOWER, MIDDLE  \n Date Format -> dd/MM/yyyy HH:mm")
+    @Operation(description = "Priority -> HIGH, LOWER, MIDDLE  \n Date Format -> dd/MM/yyyy HH:mm  " +
+            "\n Category -> NEAR_MISS, OBSERVATION, ACCIDENT, INCIDENT")
     public ResponseEntity<ApiResponse<String>> updateReport(@AuthenticationPrincipal User user,
                                                             @RequestBody ReqReportDTO reqReportDTO){
         return ResponseEntity.ok(reportService.updateReport(user, reqReportDTO));

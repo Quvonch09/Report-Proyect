@@ -2,6 +2,7 @@ package sfera.reportproyect.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import sfera.reportproyect.entity.enums.Category;
 import sfera.reportproyect.entity.enums.Priority;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class ReqReportDTO {
 
     private Long dangerTypeId;
 
-    private Long categoryId;
+    private Category category;
 
     private String reportName;
 

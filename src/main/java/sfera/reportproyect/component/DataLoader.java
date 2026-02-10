@@ -36,10 +36,10 @@ public class DataLoader implements CommandLineRunner {
             User anonymous = User.builder()
                     .firstName("Anonim")
                     .lastName("Anonim")
-                    .phone(null)
-                    .password(null)
+                    .phone("null")
                     .role(Role.ROLE_EMPLOYEE)
                     .enabled(true)
+                    .password(encoder.encode("anonim123"))
                     .build();
 
             userRepository.save(anonymous);
