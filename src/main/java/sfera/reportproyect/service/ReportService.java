@@ -72,6 +72,7 @@ public class ReportService {
                 .priority(req.getPriority())
                 .startTime(req.getStartTime())
                 .endTime(req.getEndTime())
+                .active(true)
                 .build();
 
         reportRepository.save(report);
@@ -179,7 +180,7 @@ public class ReportService {
 
     public ApiResponse<List<ResReport>> getAll(){
         return ApiResponse.success(
-                reportRepository.findAll().stream().map(reportMapper::resReport).toList(), "Success");
+                reportRepository.findAllByActiveTrue().stream().map(reportMapper::resReport).toList(), "Success");
     }
 
 
