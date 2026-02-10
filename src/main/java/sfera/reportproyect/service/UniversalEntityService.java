@@ -62,7 +62,7 @@ public class UniversalEntityService {
     }
 
     public ApiResponse<List<ResUniversalDto>> getList(){
-        List<UniversalEntity> all = universalEntityRepository.findAllAndActiveTrue();
+        List<UniversalEntity> all = universalEntityRepository.findAllActiveTrue();
         List<ResUniversalDto> list = all.stream().map(universalMapper::toUniversalDTO).toList();
         return ApiResponse.success(list, "Success");
     }

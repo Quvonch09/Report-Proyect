@@ -1,9 +1,6 @@
 package sfera.reportproyect.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 import sfera.reportproyect.entity.base.BaseEntity;
 import sfera.reportproyect.entity.enums.Priority;
@@ -24,7 +21,8 @@ public class Report extends BaseEntity {
 
     private String description;
 
-    private List<String> imgUrls;
+    @ElementCollection
+    private List<String> fileUrls;
 
     private String comment;
 
@@ -33,6 +31,12 @@ public class Report extends BaseEntity {
 
     @ManyToOne
     private UniversalEntity reportType;
+
+    @ManyToOne
+    private UniversalEntity department;
+
+    @ManyToOne
+    private UniversalEntity dangerType;
 
     @Enumerated(EnumType.STRING)
     private ReportEnum reportStatus;
@@ -54,5 +58,7 @@ public class Report extends BaseEntity {
     private LocalDateTime endTime;
 
     private LocalDateTime completedTime;
+
+    private boolean active;
 }
 

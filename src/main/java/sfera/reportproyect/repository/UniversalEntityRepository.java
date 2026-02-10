@@ -10,10 +10,8 @@ import sfera.reportproyect.entity.UniversalEntity;
 import sfera.reportproyect.entity.enums.TypeEnum;
 
 import java.util.Optional;
-import sfera.reportproyect.entity.enums.TypeEnum;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface UniversalEntityRepository extends JpaRepository<UniversalEntity, Long> {
@@ -29,7 +27,10 @@ public interface UniversalEntityRepository extends JpaRepository<UniversalEntity
                                  @Param("name") String name,
                                  Pageable pageable);
 
-    List<UniversalEntity> findAllAndActiveTrue();
+    @Query(value = """
+    select * from universal_entity where active=true
+    """, nativeQuery = true)
+    List<UniversalEntity> findAllActiveTrue();
     Optional<UniversalEntity> findByIdAndActiveTrue(Long id);
 
     Optional<UniversalEntity> findByNameAndIdNot(String name, Long id);
