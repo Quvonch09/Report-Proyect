@@ -30,4 +30,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
                               @Param("departmentId") Long departmentId,
                               @Param("dangerTypeId") Long dangerTypeId,
                               @Param("priority") String priority);
+
+    List<Report> findAllByActiveTrue();
 }
