@@ -61,8 +61,8 @@ public class UniversalEntityService {
 
     }
 
-    public ApiResponse<List<ResUniversalDto>> getList(){
-        List<UniversalEntity> all = universalEntityRepository.findAllAndActiveTrue();
+    public ApiResponse<List<ResUniversalDto>> getList(TypeEnum typeEnum){
+        List<UniversalEntity> all = universalEntityRepository.findAllAndActiveTrue(typeEnum);
         List<ResUniversalDto> list = all.stream().map(universalMapper::toUniversalDTO).toList();
         return ApiResponse.success(list, "Success");
     }
@@ -79,14 +79,15 @@ public class UniversalEntityService {
         UniversalEntity uni = universalEntityRepository.findByIdAndActiveTrue(id).
                 orElseThrow(() -> new DataNotFoundException("Xech nima topilmadi"));
 
-        UniversalEntity nameExist = universalEntityRepository.findByNameAndIdNot(reqFilial.getName(), id).
-                orElseThrow(() -> new BadRequestException("Name exist"));
-        uni.setName(nameExist.getName());
+        boolean exists = universalEntityRepository.existsByNameAndIdNot(reqFilial.getName(), id);
+        if (exists) {
+            return ApiResponse.error("This name already exists");
+        }
+        uni.setName(reqFilial.getName());
         universalEntityRepository.save(uni);
         return ApiResponse.success(null, "Success");
 
     }
-
 
     public ApiResponse<String> delete(Long id){
         UniversalEntity uni = universalEntityRepository.findByIdAndActiveTrue(id).

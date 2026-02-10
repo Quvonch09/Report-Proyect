@@ -24,16 +24,15 @@ public class FilialController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<ResPageable>> getFilialByPage(@RequestBody TypeEnum typeEnum,
-                                                                    @RequestBody String name,
+    public ResponseEntity<ApiResponse<ResPageable>> getFilialByPage(@RequestBody String name,
                                                                     @RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(universalEntityService.getByPage(typeEnum, name, page, size));
+        return ResponseEntity.ok(universalEntityService.getByPage(TypeEnum.FILIAL, name, page, size));
     }
 
     @GetMapping("/get-list")
     public ResponseEntity<ApiResponse<List<ResUniversalDto>>> getFilialList() {
-        return ResponseEntity.ok(universalEntityService.getList());
+        return ResponseEntity.ok(universalEntityService.getList(TypeEnum.FILIAL));
     }
 
     @GetMapping("/{filialId}")
@@ -44,7 +43,6 @@ public class FilialController {
     @PutMapping("/{filialId}")
     public ResponseEntity<ApiResponse<String>> updateFilial(@PathVariable Long filialId, @RequestBody ReqFilial reqFilial) {
         return ResponseEntity.ok(universalEntityService.update(filialId, reqFilial));
-
     }
 
     @DeleteMapping("/{filialId}")

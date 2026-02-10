@@ -29,9 +29,9 @@ public interface UniversalEntityRepository extends JpaRepository<UniversalEntity
                                  @Param("name") String name,
                                  Pageable pageable);
 
-    List<UniversalEntity> findAllAndActiveTrue();
+    List<UniversalEntity> findAllAndActiveTrue(TypeEnum typeEnum);
     Optional<UniversalEntity> findByIdAndActiveTrue(Long id);
 
-    Optional<UniversalEntity> findByNameAndIdNot(String name, Long id);
+    boolean existsByNameAndIdNot(String name, Long id);
     Optional<UniversalEntity> findByIdAndTypeEnum(Long id, TypeEnum typeEnum);
 }
