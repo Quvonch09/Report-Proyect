@@ -32,6 +32,17 @@ public class DataLoader implements CommandLineRunner {
                     .build();
 
             userRepository.save(admin);
+
+            User anonymous = User.builder()
+                    .firstName("Anonim")
+                    .lastName("Anonim")
+                    .phone(null)
+                    .password(null)
+                    .role(Role.ROLE_EMPLOYEE)
+                    .enabled(true)
+                    .build();
+
+            userRepository.save(anonymous);
         }
     }
 }

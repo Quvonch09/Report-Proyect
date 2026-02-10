@@ -12,7 +12,6 @@ import sfera.reportproyect.dto.response.ResLocation;
 import sfera.reportproyect.dto.response.ResPageable;
 import sfera.reportproyect.entity.Location;
 import sfera.reportproyect.entity.UniversalEntity;
-import sfera.reportproyect.entity.enums.TypeEnum;
 import sfera.reportproyect.exception.DataNotFoundException;
 import sfera.reportproyect.mapper.LocationMapper;
 import sfera.reportproyect.repository.LocationRepository;
@@ -64,7 +63,7 @@ public class LocationService {
     }
 
     public ApiResponse<List<LocationDTO>> getLocationList(){
-        List<LocationDTO> allAndActiveTrue = locationRepository.findAllAndActiveTrue();
+        List<LocationDTO> allAndActiveTrue = locationRepository.findAllByActiveTrue();
         return ApiResponse.success(allAndActiveTrue, "Success");
     }
 
