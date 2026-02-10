@@ -11,7 +11,9 @@ import sfera.reportproyect.dto.ApiResponse;
 import sfera.reportproyect.dto.request.ReqReport;
 import sfera.reportproyect.dto.request.ReqReportDTO;
 import sfera.reportproyect.dto.response.ResReport;
+import sfera.reportproyect.dto.response.ResReportDTO;
 import sfera.reportproyect.entity.User;
+import sfera.reportproyect.entity.enums.Category;
 import sfera.reportproyect.entity.enums.Priority;
 import sfera.reportproyect.entity.enums.ReportEnum;
 import sfera.reportproyect.service.ReportService;
@@ -74,13 +76,19 @@ public class ReportController {
 
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<List<ResReport>>> search(@RequestParam(required = false) Long filialId,
-                                                               @RequestParam(required = false) Long categoryId,
+                                                               @RequestParam(required = false) Category category,
                                                                @RequestParam(required = false) Long reportTypeId,
                                                                @RequestParam(required = false) Long departmentId,
                                                                @RequestParam(required = false) Long dangerTypeId,
                                                                @RequestParam(required = false) Priority priority){
         return ResponseEntity.ok(reportService.search(
-                filialId, categoryId, reportTypeId, departmentId, dangerTypeId, priority
+                filialId, category, reportTypeId, departmentId, dangerTypeId, priority
         ));
+    }
+
+
+    @GetMapping("/{reportId}")
+    public ResponseEntity<ApiResponse<ResReportDTO>> getReport(@PathVariable Long reportId){
+        return ResponseEntity.ok(reportService.getOne(reportId));
     }
 }

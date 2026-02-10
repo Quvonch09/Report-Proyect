@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sfera.reportproyect.dto.ApiResponse;
+import sfera.reportproyect.dto.request.AuthRegister;
 import sfera.reportproyect.service.AuthService;
 
 @RestController
@@ -25,6 +26,18 @@ public class AuthController {
             @RequestParam String password
     ){
         return ResponseEntity.ok(authService.login(phone, password));
+    }
+
+
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<Integer>> registerUser(@RequestBody AuthRegister authRegister){
+        return ResponseEntity.ok(authService.register(authRegister));
+    }
+
+
+    @PostMapping("/activate")
+    public ResponseEntity<ApiResponse<String>> activateUser(@RequestParam Integer code){
+        return ResponseEntity.ok(authService.activate(code));
     }
 
 }
