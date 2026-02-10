@@ -16,7 +16,7 @@ public class ReportMapper {
                         report.getAssignedUser().getFirstName() + " " + report.getAssignedUser().getLastName() : null)
                 .assigneeId(report.getAssignedUser() != null ? report.getAssignedUser().getId() : null)
                 .assigneeImg(report.getAssignedUser() != null ? report.getAssignedUser().getImgUrl() : null)
-                .category(report.getCategory() != null ? report.getCategory().getName() : null)
+                .category(report.getCategory() != null ? report.getCategory().name() : null)
                 .dangerType(report.getDangerType() != null ? report.getDangerType().getName() : null)
                 .department(report.getDepartment() != null ? report.getDepartment().getName() : null)
                 .priority(report.getPriority())

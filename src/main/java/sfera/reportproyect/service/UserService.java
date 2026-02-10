@@ -51,17 +51,11 @@ public class UserService {
                         () -> new DataNotFoundException("Department not found")
                 );
 
-        UniversalEntity lavozim = universalEntityRepository.
-                findByIdAndTypeEnum(reqUser.getLavozimId(), TypeEnum.LAVOZIM).orElseThrow(
-                        () -> new DataNotFoundException("Department not found")
-                );
-
         user.setFirstName(reqUser.getFirstName());
         user.setLastName(reqUser.getLastName());
         user.setImgUrl(reqUser.getImgUrl());
         user.setDepartment(department);
         user.setFilial(filial);
-        user.setLavozim(lavozim);
 
         if (!user.getPhone().equals(reqUser.getPhone())){
             user.setPhone(reqUser.getPhone());
@@ -121,11 +115,6 @@ public class UserService {
             return ApiResponse.error("Phone number already in use");
         }
 
-        UniversalEntity lavozim = universalEntityRepository.
-                findByIdAndTypeEnum(reqUser.getLavozimId(), TypeEnum.LAVOZIM).orElseThrow(
-                        () -> new DataNotFoundException("Department not found")
-                );
-
         UniversalEntity filial = universalEntityRepository.
                 findByIdAndTypeEnum(reqUser.getFilialId(), TypeEnum.FILIAL).orElseThrow(
                         () -> new DataNotFoundException("Department not found")
@@ -145,7 +134,6 @@ public class UserService {
                 .firstName(reqUser.getFirstName())
                 .lastName(reqUser.getLastName())
                 .imgUrl(reqUser.getImgUrl())
-                .lavozim(lavozim)
                 .filial(filial)
                 .department(department)
                 .build();
