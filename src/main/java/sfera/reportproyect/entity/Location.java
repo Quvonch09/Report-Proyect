@@ -2,10 +2,7 @@ package sfera.reportproyect.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import sfera.reportproyect.entity.base.BaseEntity;
 
 @Entity
@@ -13,6 +10,7 @@ import sfera.reportproyect.entity.base.BaseEntity;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Location extends BaseEntity {
     private String name;
     @ManyToOne

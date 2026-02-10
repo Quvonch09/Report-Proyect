@@ -31,8 +31,9 @@ public interface UniversalEntityRepository extends JpaRepository<UniversalEntity
     select * from universal_entity where active=true
     """, nativeQuery = true)
     List<UniversalEntity> findAllActiveTrue();
+    List<UniversalEntity> findAllAndActiveTrue(TypeEnum typeEnum);
     Optional<UniversalEntity> findByIdAndActiveTrue(Long id);
 
-    Optional<UniversalEntity> findByNameAndIdNot(String name, Long id);
+    boolean existsByNameAndIdNot(String name, Long id);
     Optional<UniversalEntity> findByIdAndTypeEnum(Long id, TypeEnum typeEnum);
 }
