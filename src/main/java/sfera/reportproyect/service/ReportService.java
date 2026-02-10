@@ -9,19 +9,17 @@ import sfera.reportproyect.dto.request.ReqReport;
 import sfera.reportproyect.dto.request.ReqReportDTO;
 import sfera.reportproyect.dto.response.ResPageable;
 import sfera.reportproyect.dto.response.ResReport;
-import sfera.reportproyect.entity.Location;
-import sfera.reportproyect.entity.Report;
-import sfera.reportproyect.entity.UniversalEntity;
-import sfera.reportproyect.entity.User;
+import sfera.reportproyect.dto.response.ResReportActivity;
+import sfera.reportproyect.dto.response.ResReportDTO;
+import sfera.reportproyect.entity.*;
+import sfera.reportproyect.entity.enums.Category;
 import sfera.reportproyect.entity.enums.Priority;
 import sfera.reportproyect.entity.enums.ReportEnum;
 import sfera.reportproyect.entity.enums.TypeEnum;
 import sfera.reportproyect.exception.DataNotFoundException;
+import sfera.reportproyect.mapper.ReportActivityMapper;
 import sfera.reportproyect.mapper.ReportMapper;
-import sfera.reportproyect.repository.LocationRepository;
-import sfera.reportproyect.repository.ReportRepository;
-import sfera.reportproyect.repository.UniversalEntityRepository;
-import sfera.reportproyect.repository.UserRepository;
+import sfera.reportproyect.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,6 +34,8 @@ public class ReportService {
     private final UserRepository userRepository;
     private final ReportMapper reportMapper;
     private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
+    private final ReportActivityRepository reportActivityRepository;
+    private final ReportActivityMapper reportActivityMapper;
 
 
     public ApiResponse<String> saveReport(User user, ReqReport req) {
@@ -75,6 +75,8 @@ public class ReportService {
 
         reportRepository.save(report);
         sendToAll(reportMapper.resReport(report));
+
+        saveActivity("Report created by " + user.getFirstName() + " " + user.getLastName(), report);
 
         return ApiResponse.success(null, "Success");
     }
@@ -117,6 +119,9 @@ public class ReportService {
         report.setStartTime(reqReportDTO.getStartTime());
         report.setEndTime(reqReportDTO.getEndTime());
         Report save = reportRepository.save(report);
+
+        saveActivity("Report updated by " + user.getFirstName() + " " + user.getLastName(), save);
+
         sendToAll(reportMapper.resReport(save));
         return ApiResponse.success(null, "Success");
     }
@@ -155,15 +160,18 @@ public class ReportService {
         }
 
         Report saved = reportRepository.save(report);
+
+        saveActivity("Report status changed from " + fromStatus + " to " + toStatus, saved);
+
         sendToAll(reportMapper.resReport(saved));
         return ApiResponse.success(reportMapper.resReport(saved), "Success");
     }
 
 
-    public ApiResponse<List<ResReport>> search(Long filialId, Long categoryId, Long reportTypeId,
-                                           Long departmentId, Long dangerTypeId, Priority priority){
-        List<Report> reports = reportRepository.searchReport(filialId, categoryId, reportTypeId,
-                departmentId, dangerTypeId, priority != null ? priority.name() : null);
+    public ApiResponse<List<ResReport>> search(Long filialId, Category category, Long reportTypeId,
+                                               Long departmentId, Long dangerTypeId, Priority priority){
+        List<Report> reports = reportRepository.searchReport(filialId, category != null ? category.name() : null,
+                reportTypeId, departmentId, dangerTypeId, priority != null ? priority.name() : null);
         List<ResReport> list = reports.stream().map(reportMapper::resReport).toList();
 
         return ApiResponse.success(list, "Success");
@@ -174,6 +182,19 @@ public class ReportService {
     public ApiResponse<List<ResReport>> getAll(){
         return ApiResponse.success(
                 reportRepository.findAllByActiveTrue().stream().map(reportMapper::resReport).toList(), "Success");
+    }
+
+
+
+    public ApiResponse<ResReportDTO> getOne(Long id){
+        Report report = reportRepository.findByIdAndActiveTrue(id).orElseThrow(
+                () -> new DataNotFoundException("Report not found")
+        );
+
+        List<ResReportActivity> activities = reportActivityRepository
+                .findAllByReport_Id(id).stream().map(reportActivityMapper::reportActivity).toList();
+
+        return ApiResponse.success(reportMapper.resReportDTO(report,activities), "Success");
     }
 
 
@@ -218,6 +239,16 @@ public class ReportService {
         return locationRepository
                 .findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Location not found"));
+    }
+
+
+
+    public void saveActivity(String msg, Report report) {
+        ReportActivity reportActivity = ReportActivity.builder()
+                .report(report)
+                .description(msg)
+                .build();
+        reportActivityRepository.save(reportActivity);
     }
 
 

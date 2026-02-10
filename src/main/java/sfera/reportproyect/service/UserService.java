@@ -10,6 +10,7 @@ import sfera.reportproyect.dto.response.ResPageable;
 import sfera.reportproyect.dto.response.ResUser;
 import sfera.reportproyect.entity.UniversalEntity;
 import sfera.reportproyect.entity.User;
+import sfera.reportproyect.entity.enums.Category;
 import sfera.reportproyect.entity.enums.Role;
 import sfera.reportproyect.entity.enums.TypeEnum;
 import sfera.reportproyect.exception.DataNotFoundException;
@@ -140,4 +141,17 @@ public class UserService {
         userRepository.save(user);
         return ApiResponse.success(null, "Success");
     }
+
+
+
+//    public ApiResponse<?> dashboardCount(User customUser){
+//        if (customUser.getRole().equals(Role.ROLE_SUPER_ADMIN)){
+//            long accident = reportRepository.countByCategory(Category.ACCIDENT);
+//            long nearMiss = reportRepository.countByCategory(Category.NEAR_MISS);
+//            long incident = reportRepository.countByCategory(Category.INCIDENT);
+//            long observation = reportRepository.countByCategory(Category.OBSERVATION);
+//        } else {
+//
+//        }
+//    }
 }
