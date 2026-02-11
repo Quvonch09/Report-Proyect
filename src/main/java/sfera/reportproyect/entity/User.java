@@ -20,9 +20,6 @@ import java.util.List;
 @Entity(name = "users")
 public class User extends BaseEntity implements UserDetails {
 
-    // Boshqa qushimcha entity yoziladi
-
-
     @Column(nullable = false)
     private String firstName;
 
@@ -40,11 +37,10 @@ public class User extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @ManyToOne
-    private UniversalEntity filial;
+    private int code; //11111
 
     @ManyToOne
-    private UniversalEntity lavozim;
+    private UniversalEntity filial;
 
     @ManyToOne
     private UniversalEntity department;
