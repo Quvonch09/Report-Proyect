@@ -16,37 +16,37 @@ import java.util.List;
 @RequestMapping("/report-type")
 @RequiredArgsConstructor
 public class ReportTypeController {
-    private final UniversalEntityService universalEntityService;
+    private final UniversalEntityService uniService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<String>> saveReportType(@RequestBody ReqFilial reqFilial) {
-        return ResponseEntity.ok(universalEntityService.save(reqFilial, TypeEnum.REPORT_TYPE));
+    public ResponseEntity<ApiResponse<String>> create(@RequestBody ReqFilial req){
+        return ResponseEntity.ok(uniService.save(req,TypeEnum.REPORT_TYPE));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<ResPageable>> getReportByPage(@RequestBody String name,
-                                                                    @RequestParam(defaultValue = "0") int page,
-                                                                    @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(universalEntityService.getByPage(TypeEnum.REPORT_TYPE, name, page, size));
+    public ResponseEntity<ApiResponse<ResPageable>> geByPage(@RequestBody String name,
+                                                             @RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size){
+        return ResponseEntity.ok(uniService.getByPage(TypeEnum.REPORT_TYPE, name, page, size));
     }
 
     @GetMapping("/get-list")
-    public ResponseEntity<ApiResponse<List<ResUniversalDto>>> getFilialList() {
-        return ResponseEntity.ok(universalEntityService.getList(TypeEnum.REPORT_TYPE));
-    }
-
-    @GetMapping("/{reportTypeId}")
-    public ResponseEntity<ApiResponse<ResUniversalDto>> getReportTypeById(@PathVariable Long reportTypeId) {
-        return ResponseEntity.ok(universalEntityService.getById(reportTypeId));
+    public ResponseEntity<ApiResponse<List<ResUniversalDto>>> getList(){
+        return ResponseEntity.ok(uniService.getList(TypeEnum.REPORT_TYPE));
     }
 
     @PutMapping("/{reportTypeId}")
-    public ResponseEntity<ApiResponse<String>> updateReportType(@PathVariable Long reportTypeId, @RequestBody ReqFilial reqFilial) {
-        return ResponseEntity.ok(universalEntityService.update(reportTypeId, reqFilial));
+    public ResponseEntity<ApiResponse<String>> update(@PathVariable Long reportTypeId,@RequestBody ReqFilial req){
+        return ResponseEntity.ok(uniService.update(reportTypeId,req));
+    }
+
+    @GetMapping("/{reportTypeId}")
+    public ResponseEntity<ApiResponse<ResUniversalDto>> getById(@PathVariable Long reportTypeId){
+        return ResponseEntity.ok(uniService.getById(reportTypeId));
     }
 
     @DeleteMapping("/{reportTypeId}")
-    public ResponseEntity<ApiResponse<String>> deleteReportType(@PathVariable Long reportTypeId) {
-        return ResponseEntity.ok(universalEntityService.delete(reportTypeId));
+    public ResponseEntity<ApiResponse<String>> delete(@PathVariable Long reportTypeId){
+        return ResponseEntity.ok(uniService.delete(reportTypeId));
     }
 }
