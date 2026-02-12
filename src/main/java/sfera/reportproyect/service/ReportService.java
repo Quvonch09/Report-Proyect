@@ -5,24 +5,25 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sfera.reportproyect.dto.ApiResponse;
+import sfera.reportproyect.dto.CategoryStatusStat;
+import sfera.reportproyect.dto.StatPoint;
 import sfera.reportproyect.dto.request.ReqReport;
 import sfera.reportproyect.dto.request.ReqReportDTO;
-import sfera.reportproyect.dto.response.ResPageable;
-import sfera.reportproyect.dto.response.ResReport;
-import sfera.reportproyect.dto.response.ResReportActivity;
-import sfera.reportproyect.dto.response.ResReportDTO;
+import sfera.reportproyect.dto.response.*;
 import sfera.reportproyect.entity.*;
-import sfera.reportproyect.entity.enums.Category;
-import sfera.reportproyect.entity.enums.Priority;
-import sfera.reportproyect.entity.enums.ReportEnum;
-import sfera.reportproyect.entity.enums.TypeEnum;
+import sfera.reportproyect.entity.enums.*;
 import sfera.reportproyect.exception.DataNotFoundException;
 import sfera.reportproyect.mapper.ReportActivityMapper;
 import sfera.reportproyect.mapper.ReportMapper;
 import sfera.reportproyect.repository.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
@@ -198,6 +199,181 @@ public class ReportService {
     }
 
 
+    public ApiResponse<ResDashBoard> getCountDashboard(User user){
+        Long accident = null;
+        Long observation = null;
+        Long nearMiss = null;
+        Long incident = null;
+        Long acceptedCount = null;
+        Long cancelledCount = null;
+        Long newReportCount = null;
+        Long inProgressCount = null;
+        Long completedCount = null;
+        if (user.getRole().equals(Role.ROLE_ADMIN)){
+            accident = reportRepository.
+                    countByCategoryAndActiveTrueAndAssignedUser_Id(Category.ACCIDENT, user.getId());
+            observation = reportRepository.
+                    countByCategoryAndActiveTrueAndAssignedUser_Id(Category.OBSERVATION, user.getId());
+            nearMiss = reportRepository.
+                    countByCategoryAndActiveTrueAndAssignedUser_Id(Category.NEAR_MISS, user.getId());
+            incident = reportRepository.
+                    countByCategoryAndActiveTrueAndAssignedUser_Id(Category.INCIDENT, user.getId());
+            acceptedCount = reportRepository.
+                    countByReportStatusAndActiveTrueAndAssignedUser_Id(ReportEnum.ACCEPTED, user.getId());
+            cancelledCount = reportRepository.
+                    countByReportStatusAndActiveTrueAndAssignedUser_Id(ReportEnum.CANCELLED, user.getId());
+            newReportCount = reportRepository.
+                    countByReportStatusAndActiveTrueAndAssignedUser_Id(ReportEnum.NEW_REPORT, user.getId());
+            inProgressCount = reportRepository.
+                    countByReportStatusAndActiveTrueAndAssignedUser_Id(ReportEnum.IN_PROGRESS, user.getId());
+            completedCount = reportRepository.
+                    countByReportStatusAndActiveTrueAndAssignedUser_Id(ReportEnum.COMPLETED, user.getId());
+        } else {
+            accident = reportRepository.countByCategoryAndActiveTrue(Category.ACCIDENT);
+            observation = reportRepository.countByCategoryAndActiveTrue(Category.OBSERVATION);
+            nearMiss = reportRepository.countByCategoryAndActiveTrue(Category.NEAR_MISS);
+            incident = reportRepository.countByCategoryAndActiveTrue(Category.INCIDENT);
+        }
+        return ApiResponse.success(resDashBoard(accident, observation, nearMiss, incident,
+                acceptedCount,cancelledCount,newReportCount,inProgressCount,completedCount),"Success");
+    }
+
+
+    public ApiResponse<List<StatPoint>> getStatistic(User user, Date date){
+        if (user.getRole().equals(Role.ROLE_ADMIN)){
+            if (date.equals(Date.YEARLY)){
+                return yearly(user.getId());
+            } else if (date.equals(Date.MONTHLY)){
+                return monthly(user.getId());
+            } else {
+                return weekly(user.getId());
+            }
+        } else {
+            if (date.equals(Date.YEARLY)){
+                return yearly(null);
+            } else if (date.equals(Date.MONTHLY)){
+                return monthly(null);
+            } else {
+                return weekly(null);
+            }
+        }
+    }
+
+
+
+    public ApiResponse<List<StatPoint>> yearly(Long userId) {
+        int year = LocalDate.now().getYear();
+        LocalDateTime from = LocalDateTime.of(year, 1, 1, 0, 0);
+        LocalDateTime to   = from.plusYears(1);
+
+        return ApiResponse.success(map(reportRepository.countByMonthRange(from, to, userId)), "Success");
+    }
+
+
+    public ApiResponse<List<CategoryStatusStat>> categoryStats(User user,Date date){
+        if (user.getRole().equals(Role.ROLE_ADMIN)){
+            if (date.equals(Date.YEARLY)){
+                int year = LocalDate.now().getYear();
+                LocalDateTime from = LocalDateTime.of(year, 1, 1, 0, 0);
+                LocalDateTime to   = from.plusYears(1);
+                return stats(user.getId(),from, to);
+            } else if (date.equals(Date.MONTHLY)){
+                int year = LocalDate.now().getYear();
+                int month = LocalDate.now().getMonth().getValue();
+                LocalDate first = LocalDate.of(year, month, 1);
+                LocalDateTime from = first.atStartOfDay();
+                LocalDateTime to   = first.plusMonths(1).atStartOfDay();
+                return stats(user.getId(),from,to);
+            } else {
+                LocalDate start = LocalDate.now().with(java.time.DayOfWeek.MONDAY);
+                LocalDateTime from = start.atStartOfDay();
+                LocalDateTime to   = start.plusDays(7).atStartOfDay();
+                return stats(user.getId(),from, to);
+            }
+        } else {
+            if (date.equals(Date.YEARLY)){
+                int year = LocalDate.now().getYear();
+                LocalDateTime from = LocalDateTime.of(year, 1, 1, 0, 0);
+                LocalDateTime to   = from.plusYears(1);
+                return stats(null,from, to);
+            } else if (date.equals(Date.MONTHLY)){
+                int year = LocalDate.now().getYear();
+                int month = LocalDate.now().getMonth().getValue();
+                LocalDate first = LocalDate.of(year, month, 1);
+                LocalDateTime from = first.atStartOfDay();
+                LocalDateTime to   = first.plusMonths(1).atStartOfDay();
+                return stats(null,from,to);
+            } else {
+                LocalDate start = LocalDate.now().with(java.time.DayOfWeek.MONDAY);
+                LocalDateTime from = start.atStartOfDay();
+                LocalDateTime to   = start.plusDays(7).atStartOfDay();
+                return stats(null, from, to);
+            }
+        }
+    }
+
+
+    public ApiResponse<List<CategoryStatusStat>> stats(Long userId, LocalDateTime from, LocalDateTime to) {
+        List<Object[]> rows = reportRepository.countByCategoryAndStatus(from, to, userId);
+
+        // category -> (status -> count)
+        Map<String, Map<String, Long>> pivot = new LinkedHashMap<>();
+
+        for (Object[] r : rows) {
+            String category = String.valueOf(r[0]);
+            String status   = String.valueOf(r[1]);
+            Long count      = ((Number) r[2]).longValue();
+
+            pivot.computeIfAbsent(category, k -> new LinkedHashMap<>())
+                    .put(status, count);
+        }
+
+        // Agar chartda hamma statuslar doim ko‘rinsin desangiz (0 bo‘lsa ham):
+        List<String> allStatuses = Arrays.stream(ReportEnum.values())
+                .map(Enum::name)
+                .toList();
+
+        List<CategoryStatusStat> list = pivot.entrySet().stream()
+                .map(e -> {
+                    Map<String, Long> counts = e.getValue();
+                    for (String s : allStatuses) counts.putIfAbsent(s, 0L);
+                    return new CategoryStatusStat(e.getKey(), counts);
+                })
+                .toList();
+
+        return ApiResponse.success(list, "Success");
+    }
+
+    public ApiResponse<List<StatPoint>> monthly(Long userId) {
+        int year = LocalDate.now().getYear();
+        int month = LocalDate.now().getMonth().getValue();
+        LocalDate firstDay = LocalDate.of(year, month, 1);
+        LocalDateTime from = firstDay.atStartOfDay();
+        LocalDateTime to   = firstDay.plusMonths(1).atStartOfDay();
+
+        return ApiResponse.success(map(reportRepository.countByDayRange(from, to, userId)),  "Success");
+    }
+
+    public ApiResponse<List<StatPoint>> weekly(Long userId) {
+        // Dushanbadan yakshanbagacha
+        LocalDate start = LocalDate.now().with(java.time.DayOfWeek.MONDAY);
+        LocalDateTime from = start.atStartOfDay();
+        LocalDateTime to   = start.plusDays(7).atStartOfDay();
+
+        return ApiResponse.success(map(reportRepository.countByWeekDaysRange(from, to, userId)), "Success");
+    }
+
+    private List<StatPoint> map(List<Object[]> rows) {
+        return rows.stream()
+                .map(r -> new StatPoint(
+                        String.valueOf(r[0]).trim(),
+                        ((Number) r[1]).longValue()
+                ))
+                .toList();
+    }
+
+
+
     // SSE
     public SseEmitter addEmitter() {
         SseEmitter emitter = new SseEmitter(0L); // no timeout
@@ -251,5 +427,21 @@ public class ReportService {
         reportActivityRepository.save(reportActivity);
     }
 
+
+    private ResDashBoard resDashBoard(Long accident,Long observation, Long nearMiss, Long incident,
+                                      Long acceptedCount, Long cancelledCount, Long newReportCount,
+                                      Long inProgressCount, Long completedCount){
+        return ResDashBoard.builder()
+                .nearMissCount(nearMiss)
+                .incidentCount(incident)
+                .accidentCount(accident)
+                .observationCount(observation)
+                .newReportCount(newReportCount)
+                .cancelledCount(cancelledCount)
+                .inProgressCount(inProgressCount)
+                .completedCount(completedCount)
+                .acceptedCount(acceptedCount)
+                .build();
+    }
 
 }
