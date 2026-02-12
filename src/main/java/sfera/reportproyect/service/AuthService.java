@@ -86,6 +86,7 @@ public class AuthService {
 
         if (user.getCode() == code){
             user.setEnabled(true);
+            user.setCode(0);
         }
 
         String token = jwtService.generateToken(

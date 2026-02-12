@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import sfera.reportproyect.entity.User;
+import sfera.reportproyect.entity.enums.Role;
 
 import java.util.Optional;
 
@@ -29,5 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByPhoneAndEnabledTrue(String phone);
 
     Optional<User> findByCode(Integer code);
+
+    int countByRoleAndEnabledTrue(Role role);
 
 }

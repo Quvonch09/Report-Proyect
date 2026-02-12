@@ -62,7 +62,7 @@ public class UniversalEntityService {
     }
 
     public ApiResponse<List<ResUniversalDto>> getList(TypeEnum typeEnum){
-        List<UniversalEntity> all = universalEntityRepository.findAllAndActiveTrue(typeEnum);
+        List<UniversalEntity> all = universalEntityRepository.findAllAndActiveTrue(typeEnum.name());
         List<ResUniversalDto> list = all.stream().map(universalMapper::toUniversalDTO).toList();
         return ApiResponse.success(list, "Success");
     }

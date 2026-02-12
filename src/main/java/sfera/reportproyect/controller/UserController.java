@@ -7,12 +7,22 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sfera.reportproyect.dto.ApiResponse;
+import sfera.reportproyect.dto.StatPoint;
+import sfera.reportproyect.dto.UserDashboardDTO;
 import sfera.reportproyect.dto.request.ReqUser;
+import sfera.reportproyect.dto.response.ResDashBoard;
 import sfera.reportproyect.dto.response.ResPageable;
 import sfera.reportproyect.dto.response.ResUser;
+import sfera.reportproyect.dto.response.ResUserDTO;
 import sfera.reportproyect.entity.User;
+import sfera.reportproyect.entity.enums.Date;
 import sfera.reportproyect.entity.enums.Role;
+import sfera.reportproyect.exception.DataNotFoundException;
+import sfera.reportproyect.repository.UserRepository;
+import sfera.reportproyect.service.ReportService;
 import sfera.reportproyect.service.UserService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -20,6 +30,8 @@ import sfera.reportproyect.service.UserService;
 public class UserController {
 
     private final UserService userService;
+    private final ReportService reportService;
+    private final UserRepository userRepository;
 
     @GetMapping("/me")
     @Operation(summary = "Barcha uchun profile kurish API")
@@ -56,5 +68,31 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse<String>> createUser(@RequestParam Role role,@RequestBody ReqUser reqUser){
         return ResponseEntity.ok(userService.saveUsers(role, reqUser));
+    }
+
+    @GetMapping("/dashboard-count")
+    public ResponseEntity<ApiResponse<ResDashBoard>> getDashboardCount(@AuthenticationPrincipal User user){
+        return ResponseEntity.ok(reportService.getCountDashboard(user));
+    }
+
+
+    @GetMapping("/count-user")
+    public ResponseEntity<ApiResponse<UserDashboardDTO>> getUserDashboardCount(){
+        return ResponseEntity.ok(userService.getUserDashboard());
+    }
+
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponse<ResUserDTO>> getUserDashboard(@PathVariable Long userId){
+        return ResponseEntity.ok(userService.getOne(userId));
+    }
+
+
+    @GetMapping("/get-user-stats/{userId}")
+    public ResponseEntity<ApiResponse<List<StatPoint>>> statistic(@PathVariable Long userId, @RequestParam Date date) {
+        User user = userRepository.findByIdAndEnabledTrue(userId).orElseThrow(
+                () -> new DataNotFoundException("User not found")
+        );
+        return ResponseEntity.ok(reportService.getStatistic(user,date));
     }
 }
