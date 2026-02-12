@@ -5,9 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import sfera.reportproyect.dto.ApiResponse;
+import sfera.reportproyect.dto.UserDashboardDTO;
 import sfera.reportproyect.dto.request.ReqUser;
+import sfera.reportproyect.dto.response.ResDashBoard;
 import sfera.reportproyect.dto.response.ResPageable;
 import sfera.reportproyect.dto.response.ResUser;
+import sfera.reportproyect.dto.response.ResUserDTO;
 import sfera.reportproyect.entity.UniversalEntity;
 import sfera.reportproyect.entity.User;
 import sfera.reportproyect.entity.enums.Category;
@@ -30,6 +33,7 @@ public class UserService {
     private final UniversalEntityRepository universalEntityRepository;
     private final JwtService jwtService;
     private final ReportRepository reportRepository;
+    private final ReportService reportService;
 
     public ApiResponse<ResUser> getMe(User user){
         return ApiResponse.success(userMapper.resUser(user), "Success");
@@ -144,14 +148,32 @@ public class UserService {
 
 
 
-//    public ApiResponse<?> dashboardCount(User customUser){
-//        if (customUser.getRole().equals(Role.ROLE_SUPER_ADMIN)){
-//            long accident = reportRepository.countByCategory(Category.ACCIDENT);
-//            long nearMiss = reportRepository.countByCategory(Category.NEAR_MISS);
-//            long incident = reportRepository.countByCategory(Category.INCIDENT);
-//            long observation = reportRepository.countByCategory(Category.OBSERVATION);
-//        } else {
-//
-//        }
-//    }
+    public ApiResponse<UserDashboardDTO> getUserDashboard(){
+        int countAdmin = userRepository.countByRoleAndEnabledTrue(Role.ROLE_ADMIN);
+        int countUser = userRepository.countByRoleAndEnabledTrue(Role.ROLE_EMPLOYEE);
+        UserDashboardDTO userDashboardDTO = UserDashboardDTO.builder()
+                .countAdmin(countAdmin)
+                .countUser(countUser)
+                .countAll(countAdmin + countUser)
+                .build();
+        return ApiResponse.success(userDashboardDTO, "Success");
+    }
+
+
+    public ApiResponse<ResUserDTO> getOne(Long id){
+        User user = userRepository.findByIdAndEnabledTrue(id).orElseThrow(
+                () -> new DataNotFoundException("User not found")
+        );
+
+
+        ResUserDTO resUserDTO;
+        if (user.getRole().equals(Role.ROLE_ADMIN)){
+            ResDashBoard data = reportService.getCountDashboard(user).getData();
+            resUserDTO = userMapper.resUserDTO(user, data);
+        } else {
+           resUserDTO = userMapper.resUserDTO(user,null);
+        }
+
+        return ApiResponse.success(resUserDTO, "Success");
+    }
 }

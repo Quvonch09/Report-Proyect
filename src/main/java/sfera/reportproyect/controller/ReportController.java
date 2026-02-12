@@ -8,16 +8,21 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sfera.reportproyect.dto.ApiResponse;
+import sfera.reportproyect.dto.CategoryStatusStat;
+import sfera.reportproyect.dto.StatPoint;
 import sfera.reportproyect.dto.request.ReqReport;
 import sfera.reportproyect.dto.request.ReqReportDTO;
 import sfera.reportproyect.dto.response.ResReport;
 import sfera.reportproyect.dto.response.ResReportDTO;
 import sfera.reportproyect.entity.User;
 import sfera.reportproyect.entity.enums.Category;
+import sfera.reportproyect.entity.enums.Date;
 import sfera.reportproyect.entity.enums.Priority;
 import sfera.reportproyect.entity.enums.ReportEnum;
 import sfera.reportproyect.service.ReportService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -91,4 +96,17 @@ public class ReportController {
     public ResponseEntity<ApiResponse<ResReportDTO>> getReport(@PathVariable Long reportId){
         return ResponseEntity.ok(reportService.getOne(reportId));
     }
+
+
+    @GetMapping("/statistic")
+    public ResponseEntity<ApiResponse<List<StatPoint>>> statistic(@AuthenticationPrincipal User user,@RequestParam Date date) {
+        return ResponseEntity.ok(reportService.getStatistic(user,date));
+    }
+
+
+    @GetMapping("/category-status")
+    public ResponseEntity<ApiResponse<List<CategoryStatusStat>>> byYear(@AuthenticationPrincipal User user,@RequestParam Date date) {
+        return ResponseEntity.ok(reportService.categoryStats(user,date));
+    }
+
 }
