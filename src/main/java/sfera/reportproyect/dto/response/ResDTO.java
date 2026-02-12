@@ -1,16 +1,13 @@
 package sfera.reportproyect.dto.response;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import sfera.reportproyect.entity.enums.TypeEnum;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class ResUniversalDto {
+public class ResDTO {
     private Long id;
     private String name;
-    private TypeEnum type;
 }

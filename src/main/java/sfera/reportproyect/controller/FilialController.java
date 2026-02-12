@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sfera.reportproyect.dto.ApiResponse;
 import sfera.reportproyect.dto.request.ReqFilial;
+import sfera.reportproyect.dto.response.ResDTO;
 import sfera.reportproyect.dto.response.ResPageable;
 import sfera.reportproyect.dto.response.ResUniversalDto;
 import sfera.reportproyect.entity.enums.TypeEnum;
@@ -24,14 +25,14 @@ public class FilialController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<ResPageable>> getFilialByPage(@RequestBody String name,
+    public ResponseEntity<ApiResponse<ResPageable>> getFilialByPage(@RequestParam(required = false) String name,
                                                                     @RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(universalEntityService.getByPage(TypeEnum.FILIAL, name, page, size));
     }
 
     @GetMapping("/get-list")
-    public ResponseEntity<ApiResponse<List<ResUniversalDto>>> getFilialList() {
+    public ResponseEntity<ApiResponse<List<ResDTO>>> getFilialList() {
         return ResponseEntity.ok(universalEntityService.getList(TypeEnum.FILIAL));
     }
 

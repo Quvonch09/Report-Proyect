@@ -18,7 +18,7 @@ public class UniversalEntity extends BaseEntity {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private TypeEnum typeEnum;
     private boolean active;
 }

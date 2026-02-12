@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 import sfera.reportproyect.dto.ApiResponse;
 import sfera.reportproyect.dto.LocationDTO;
 import sfera.reportproyect.dto.request.ReqLocation;
+import sfera.reportproyect.dto.response.ResDTO;
 import sfera.reportproyect.dto.response.ResLocation;
 import sfera.reportproyect.dto.response.ResPageable;
 import sfera.reportproyect.entity.Location;
 import sfera.reportproyect.entity.UniversalEntity;
+import sfera.reportproyect.entity.enums.TypeEnum;
 import sfera.reportproyect.exception.DataNotFoundException;
 import sfera.reportproyect.mapper.LocationMapper;
 import sfera.reportproyect.repository.LocationRepository;
@@ -27,12 +29,12 @@ public class LocationService {
     private final LocationMapper locationMapper;
 
     public ApiResponse<String> addLocation(ReqLocation req) {
-        UniversalEntity filial = universalRepo.findByIdAndActiveTrue(req.getFilialId()).
+        UniversalEntity filial = universalRepo.findByIdAndTypeEnum(req.getFilialId(), TypeEnum.FILIAL).
                 orElseThrow(() -> new DataNotFoundException("Filial not found"));
         if (req.getName() == null || req.getName().isEmpty()) {
             return ApiResponse.error("Name cannot be empty");
         }
-        boolean exists = locationRepository.existsByNameAndIdNot(req.getName(), filial.getId());
+        boolean exists = locationRepository.existsByFilialIdAndNameIgnoreCaseAndActiveTrue(filial.getId(),req.getName());
         if (exists) {
             return ApiResponse.error("Name already exists this filial");
         }
@@ -40,6 +42,7 @@ public class LocationService {
         Location location = Location.builder()
                 .name(req.getName())
                 .filial(filial)
+                .active(true)
                 .build();
         locationRepository.save(location);
         return ApiResponse.success(null,"success");
@@ -63,8 +66,9 @@ public class LocationService {
     }
 
     public ApiResponse<List<LocationDTO>> getLocationList(){
-        List<LocationDTO> allAndActiveTrue = locationRepository.findAllByActiveTrue();
-        return ApiResponse.success(allAndActiveTrue, "Success");
+        List<Location> all = locationRepository.findAllByActiveTrue();
+        List<LocationDTO> list = all.stream().map(locationMapper::toGetList).toList();
+        return ApiResponse.success(list, "Success");
     }
 
     public ApiResponse<String> updateLocation(Long id,ReqLocation req) {
@@ -74,7 +78,7 @@ public class LocationService {
         UniversalEntity filial = universalRepo.findByIdAndActiveTrue(req.getFilialId()).
                 orElseThrow(() -> new DataNotFoundException("Filial not found"));
 
-        boolean exists = locationRepository.existsByNameAndIdNot(req.getName(), req.getFilialId());
+        boolean exists = locationRepository.existsByFilialIdAndNameIgnoreCaseAndIdNotAndActiveTrue(req.getFilialId(), req.getName(),id);
         if (exists) {
             return ApiResponse.error("Name already exists this filial");
         }

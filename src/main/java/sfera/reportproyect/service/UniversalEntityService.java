@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sfera.reportproyect.dto.ApiResponse;
 import sfera.reportproyect.dto.request.ReqFilial;
+import sfera.reportproyect.dto.response.ResDTO;
 import sfera.reportproyect.dto.response.ResPageable;
 import sfera.reportproyect.dto.response.ResUniversalDto;
 import sfera.reportproyect.entity.UniversalEntity;
@@ -61,9 +62,9 @@ public class UniversalEntityService {
 
     }
 
-    public ApiResponse<List<ResUniversalDto>> getList(TypeEnum typeEnum){
-        List<UniversalEntity> all = universalEntityRepository.findAllAndActiveTrue(typeEnum.name());
-        List<ResUniversalDto> list = all.stream().map(universalMapper::toUniversalDTO).toList();
+    public ApiResponse<List<ResDTO>> getList(TypeEnum typeEnum){
+        List<UniversalEntity> all = universalEntityRepository.findAllAndActiveTrue(typeEnum);
+        List<ResDTO> list = all.stream().map(universalMapper::toGetList).toList();
         return ApiResponse.success(list, "Success");
     }
 
