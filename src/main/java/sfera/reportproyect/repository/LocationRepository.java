@@ -15,18 +15,20 @@ import java.util.Optional;
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
-    boolean  existsByNameAndIdNot(String name, Long id);
+    boolean existsByFilialIdAndNameIgnoreCaseAndActiveTrue(Long filialId, String name);
+    boolean existsByFilialIdAndNameIgnoreCaseAndIdNotAndActiveTrue(Long filialId, String name, Long id);
 
     @Query("""
-        SELECT l FROM Location l
-        WHERE l.active = true
-          AND (:name IS NULL OR TRIM(:name) = ''
-               OR LOWER(l.name) LIKE LOWER(CONCAT('%', :name, '%')))
-    """)
-    Page<Location> search(@Param("name") String name,
-                          Pageable pageable);
+    SELECT l FROM Location l
+    WHERE l.active = true
+      AND (
+           COALESCE(:name, '') = ''
+           OR LOWER(l.name) LIKE LOWER(CONCAT('%', :name, '%'))
+      )
+""")
+    Page<Location> search(@Param("name") String name, Pageable pageable);
 
-    List<LocationDTO> findAllByActiveTrue();
+    List<Location> findAllByActiveTrue();
 
     Optional<Location> findByIdAndActiveTrue(Long id);
 }

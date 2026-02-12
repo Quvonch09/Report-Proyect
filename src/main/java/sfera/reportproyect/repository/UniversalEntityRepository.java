@@ -18,11 +18,14 @@ public interface UniversalEntityRepository extends JpaRepository<UniversalEntity
     boolean existsByTypeEnumAndNameIgnoreCase(TypeEnum typeEnum, String name);
 
     @Query("""
-        SELECT u FROM UniversalEntity u
-        WHERE u.typeEnum = :typeEnum
-          AND u.active = true
-          AND (:name IS NULL OR TRIM(:name) = '' OR LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%')))
-    """)
+    SELECT u FROM UniversalEntity u
+    WHERE u.typeEnum = :typeEnum
+      AND u.active = true
+      AND (
+          COALESCE(:name, '') = ''
+          OR LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))
+      )
+""")
     Page<UniversalEntity> search(@Param("typeEnum") TypeEnum typeEnum,
                                  @Param("name") String name,
                                  Pageable pageable);
@@ -31,7 +34,11 @@ public interface UniversalEntityRepository extends JpaRepository<UniversalEntity
     select * from universal_entity where active=true and type_enum = ?1
     """, nativeQuery = true)
     List<UniversalEntity> findAllAndActiveTrue(TypeEnum typeEnum);
+
     Optional<UniversalEntity> findByIdAndActiveTrue(Long id);
+
+    Optional<UniversalEntity> findByIdAndTypeEnumAndActiveTrue(Long id, TypeEnum typeEnum);
+
 
     boolean existsByNameAndIdNot(String name, Long id);
     Optional<UniversalEntity> findByIdAndTypeEnum(Long id, TypeEnum typeEnum);

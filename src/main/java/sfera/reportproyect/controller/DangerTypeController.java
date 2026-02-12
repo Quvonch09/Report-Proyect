@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sfera.reportproyect.dto.ApiResponse;
 import sfera.reportproyect.dto.request.ReqFilial;
+import sfera.reportproyect.dto.response.ResDTO;
 import sfera.reportproyect.dto.response.ResPageable;
 import sfera.reportproyect.dto.response.ResUniversalDto;
 import sfera.reportproyect.entity.enums.TypeEnum;
@@ -24,7 +25,7 @@ public class DangerTypeController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<ResPageable>> getPage(@RequestBody String name,
+    public ResponseEntity<ApiResponse<ResPageable>> getPage(@RequestParam(required = false) String name,
                                                             @RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(universalEntityService.getByPage(TypeEnum.DANGER_TYPE, name, page, size));
@@ -32,7 +33,7 @@ public class DangerTypeController {
     }
 
     @GetMapping("/get-list")
-    public ResponseEntity<ApiResponse<List<ResUniversalDto>>> getList(){
+    public ResponseEntity<ApiResponse<List<ResDTO>>> getList(){
         return ResponseEntity.ok(universalEntityService.getList(TypeEnum.DANGER_TYPE));
     }
 

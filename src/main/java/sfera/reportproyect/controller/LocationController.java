@@ -24,7 +24,7 @@ public class LocationController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<ResPageable>> getLocationsPageable(@RequestBody String name,
+    public ResponseEntity<ApiResponse<ResPageable>> getLocationsPageable(@RequestParam(required = false) String name,
                                                                          @RequestParam(defaultValue = "0") int page,
                                                                          @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(locationService.getLocationPage(name, page, size));

@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sfera.reportproyect.dto.ApiResponse;
 import sfera.reportproyect.dto.request.ReqFilial;
+import sfera.reportproyect.dto.response.ResDTO;
 import sfera.reportproyect.dto.response.ResPageable;
 import sfera.reportproyect.dto.response.ResUniversalDto;
 import sfera.reportproyect.entity.enums.TypeEnum;
@@ -24,14 +25,14 @@ public class ReportTypeController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<ResPageable>> geByPage(@RequestBody String name,
+    public ResponseEntity<ApiResponse<ResPageable>> geByPage(@RequestParam(required = false) String name,
                                                              @RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(uniService.getByPage(TypeEnum.REPORT_TYPE, name, page, size));
     }
 
     @GetMapping("/get-list")
-    public ResponseEntity<ApiResponse<List<ResUniversalDto>>> getList(){
+    public ResponseEntity<ApiResponse<List<ResDTO>>> getList(){
         return ResponseEntity.ok(uniService.getList(TypeEnum.REPORT_TYPE));
     }
 
